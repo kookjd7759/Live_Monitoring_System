@@ -1,0 +1,79 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtGui import QCursor
+
+from module.DB_conn import latest_data
+
+from ui.UI_main import Ui_MainWindow
+
+class MainClass(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.FramelessWindowHint) # delete window Frame
+        #self.setAttribute(Qt.WA_TranslucentBackground) # delete Background
+
+        self.init_value()
+        self.init_btn()
+        self.init_state()
+
+        self.show()
+    
+    def init_value(self):
+        self.current_menu_btn = self.ui.btn_home
+    
+    def init_state(self):
+        self.changePage('home')
+        self.ui.selectedDate_lineEdit.setReadOnly(True)
+        self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
+        self.ui.calendarWidget.clicked.connect(lambda: self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')))
+        
+        
+    def init_btn(self):
+        self.ui.btn_home.clicked.connect(lambda: self.btn_menu_clicked('home'))
+        self.ui.btn_map.clicked.connect(lambda: self.btn_menu_clicked('map'))
+        self.ui.btn_more.clicked.connect(lambda: self.btn_menu_clicked('more'))
+
+    def changePage(self, key):
+        btn = None
+        page = None
+        if key == 'home':
+            btn = self.ui.btn_home
+            page = self.ui.page_home
+        elif key == 'map':
+            btn = self.ui.btn_map
+            page = self.ui.page_map
+        elif key == 'more':
+            btn = self.ui.btn_more
+            page = self.ui.page_more
+
+        self.ui.stackwidget.setCurrentWidget(page)
+        self.current_menu_btn.setStyleSheet('*{ background-color: #313a46; color: #fff }')
+        btn.setStyleSheet('*{ background-color: #1f232a; color: #fff }')
+        self.current_menu_btn = btn
+        
+    def btn_menu_clicked(self, key):
+        self.changePage(key)
+
+    def mousePressEvent(self, event):
+        if event.button()==Qt.LeftButton:
+            self.m_flag=True
+            self.m_Position=event.globalPos()-self.pos()
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_flag:  
+            self.move(QMouseEvent.globalPos()-self.m_Position)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_flag=False
+        self.setCursor(QCursor(Qt.ArrowCursor))
+
+if __name__ == "__main__" :
+    app = QApplication(sys.argv) 
+    window = MainClass() 
+    app.exec_()

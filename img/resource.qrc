@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>icon.png</file>
+    <file>arrow-151-48.ico</file>
+    <file>arrow-213-48.ico</file>
+    <file>arrow-19-48.ico</file>
+    <file>arrow-119-48.ico</file>
+    <file>arrow-204-32.ico</file>
+  </qresource>
+  <qresource prefix="home">
+    <file>home.svg</file>
+  </qresource>
+  <qresource prefix="map">
+    <file>map.svg</file>
+  </qresource>
+  <qresource prefix="more_h">
+    <file>more-horizontal.svg</file>
+  </qresource>
+  <qresource prefix="x_sq">
+    <file>x-square.svg</file>
+  </qresource>
+</RCC>
