@@ -31,6 +31,10 @@
 	border-top-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
+}
+#menu_widget QPushButton:hover {
+	background-color: rgb(125,125,125);
+	border: 0px solid  #ffffff;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -202,9 +206,13 @@
          </property>
          <property name="styleSheet">
           <string notr="true">*{
-	border-width: 1px;
+	padding: 3px 10px;
+	border-width: 2px;
 	border-style: solid;
 	background-color: #941212;
+	color: #fff
+}
+#hover{
 	color: #fff
 }</string>
          </property>
@@ -357,20 +365,63 @@
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <widget class="QWidget" name="layoutWidget">
+                 <widget class="QLabel" name="today_date">
                   <property name="geometry">
                    <rect>
-                    <x>40</x>
-                    <y>30</y>
-                    <width>481</width>
-                    <height>251</height>
+                    <x>20</x>
+                    <y>10</y>
+                    <width>701</width>
+                    <height>34</height>
                    </rect>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="font">
+                   <font>
+                    <family>Agency FB</family>
+                    <pointsize>18</pointsize>
+                    <weight>50</weight>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">*{
+	backgroun: #000000
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>yyyy-MM-dd hh:mm</string>
+                  </property>
+                 </widget>
+                 <widget class="QWidget" name="">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>120</y>
+                    <width>581</width>
+                    <height>241</height>
+                   </rect>
+                  </property>
+                  <layout class="QVBoxLayout" name="search_layout">
                    <item>
-                    <widget class="QCalendarWidget" name="calendarWidget">
-                     <property name="styleSheet">
-                      <string notr="true">/* Style for header area  ####################################################*/ 
+                    <widget class="QLabel" name="label_2">
+                     <property name="font">
+                      <font>
+                       <family>Agency FB</family>
+                       <pointsize>20</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Search Infomation</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_2">
+                     <item>
+                      <widget class="QCalendarWidget" name="calendarWidget">
+                       <property name="styleSheet">
+                        <string notr="true">/* Style for header area  ####################################################*/ 
 
 QCalendarWidget QWidget {
 	 alternate-background-color: #B8E2FF;
@@ -537,53 +588,55 @@ QCalendarWidget QWidget {
 	border-radius:5px;
 }
 </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <layout class="QVBoxLayout" name="verticalLayout_5">
-                     <item>
-                      <widget class="QLabel" name="selectedDate_lbl">
-                       <property name="font">
-                        <font>
-                         <family>Agency FB</family>
-                         <pointsize>14</pointsize>
-                         <weight>50</weight>
-                         <bold>false</bold>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Selected Date</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLineEdit" name="selectedDate_lineEdit">
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                       <property name="text">
-                        <string>yyyy-MM-dd</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="information_lbl">
-                       <property name="font">
-                        <font>
-                         <family>Agency FB</family>
-                         <pointsize>14</pointsize>
-                         <weight>50</weight>
-                         <bold>false</bold>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Infomation</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QTextEdit" name="infomation_textEdit"/>
+                      <layout class="QVBoxLayout" name="verticalLayout_5">
+                       <item>
+                        <widget class="QLabel" name="selectedDate_lbl">
+                         <property name="font">
+                          <font>
+                           <family>Agency FB</family>
+                           <pointsize>14</pointsize>
+                           <weight>50</weight>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Selected Date</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="selectedDate_lineEdit">
+                         <property name="styleSheet">
+                          <string notr="true"/>
+                         </property>
+                         <property name="text">
+                          <string>yyyy-MM-dd</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="information_lbl">
+                         <property name="font">
+                          <font>
+                           <family>Agency FB</family>
+                           <pointsize>14</pointsize>
+                           <weight>50</weight>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="text">
+                          <string>Infomation</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QTextEdit" name="infomation_textEdit"/>
+                       </item>
+                      </layout>
                      </item>
                     </layout>
                    </item>
@@ -624,8 +677,8 @@ QCalendarWidget QWidget {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>796</width>
-                <height>624</height>
+                <width>98</width>
+                <height>28</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -690,8 +743,8 @@ QCalendarWidget QWidget {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>796</width>
-                <height>624</height>
+                <width>98</width>
+                <height>28</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_6">

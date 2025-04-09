@@ -1,13 +1,23 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import Qt, QDate, QTime, QTimer
 from PyQt5.QtGui import QCursor
 
-from module.DB_conn import latest_data
-
 from ui.UI_main import Ui_MainWindow
+from module.database import DB
 
 class MainClass(QMainWindow):
+    def update_date_time(self):
+        date = QDate.currentDate()
+        time = QTime.currentTime()
+        line = QDate.toString(date, 'yyyy-MM-dd') + '   ' + time.toString(Qt.DefaultLocaleShortDate)
+        self.ui.today_date.setText(line)
+
+    def update_info(self):
+        date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
+        self.database.search_date_one(date)
+        self.ui.infomation_textEdit.setText('didn\'t work.')
+
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
@@ -23,18 +33,25 @@ class MainClass(QMainWindow):
     
     def init_value(self):
         self.current_menu_btn = self.ui.btn_home
+        self.database = DB()
     
     def init_state(self):
         self.changePage('home')
         self.ui.selectedDate_lineEdit.setReadOnly(True)
+        self.ui.infomation_textEdit.setReadOnly(True)
         self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
         self.ui.calendarWidget.clicked.connect(lambda: self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')))
-        
+        self.update_date_time()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_date_time)
+        self.timer.start(1000)
         
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.btn_menu_clicked('home'))
         self.ui.btn_map.clicked.connect(lambda: self.btn_menu_clicked('map'))
         self.ui.btn_more.clicked.connect(lambda: self.btn_menu_clicked('more'))
+
+
 
     def changePage(self, key):
         btn = None

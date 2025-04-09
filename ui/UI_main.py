@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui\main.ui'
+# Form implementation generated from reading ui file 'ui/main.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -32,6 +32,10 @@ class Ui_MainWindow(object):
 "    border-top-right-radius: 10px;\n"
 "    border-bottom-left-radius: 10px;\n"
 "    border-bottom-right-radius: 10px;\n"
+"}\n"
+"#menu_widget QPushButton:hover {\n"
+"    background-color: rgb(125,125,125);\n"
+"    border: 0px solid  #ffffff;\n"
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -113,7 +117,8 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.btn_exit.setFont(font)
         self.btn_exit.setStyleSheet("*{\n"
-"    border-width: 1px;\n"
+"    padding: 3px 10px;\n"
+"    border-width: 2px;\n"
 "    border-style: solid;\n"
 "    background-color: #941212;\n"
 "    color: #fff\n"
@@ -172,13 +177,36 @@ class Ui_MainWindow(object):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.layoutWidget = QtWidgets.QWidget(self.frame)
-        self.layoutWidget.setGeometry(QtCore.QRect(40, 30, 481, 251))
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.layoutWidget)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.today_date = QtWidgets.QLabel(self.frame)
+        self.today_date.setGeometry(QtCore.QRect(20, 10, 701, 34))
+        font = QtGui.QFont()
+        font.setFamily("Agency FB")
+        font.setPointSize(18)
+        font.setBold(False)
+        font.setWeight(50)
+        self.today_date.setFont(font)
+        self.today_date.setStyleSheet("*{\n"
+"    backgroun: #000000\n"
+"}")
+        self.today_date.setObjectName("today_date")
+        self.widget = QtWidgets.QWidget(self.frame)
+        self.widget.setGeometry(QtCore.QRect(10, 120, 581, 241))
+        self.widget.setObjectName("widget")
+        self.search_layout = QtWidgets.QVBoxLayout(self.widget)
+        self.search_layout.setContentsMargins(0, 0, 0, 0)
+        self.search_layout.setObjectName("search_layout")
+        self.label_2 = QtWidgets.QLabel(self.widget)
+        font = QtGui.QFont()
+        font.setFamily("Agency FB")
+        font.setPointSize(20)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.search_layout.addWidget(self.label_2)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.calendarWidget = QtWidgets.QCalendarWidget(self.layoutWidget)
+        self.calendarWidget = QtWidgets.QCalendarWidget(self.widget)
         self.calendarWidget.setStyleSheet("/* Style for header area  ####################################################*/ \n"
 "\n"
 "QCalendarWidget QWidget {\n"
@@ -337,8 +365,8 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "#qt_calendar_calendarview::item:hover {\n"
-"   border-radius:5px;\n"
-"    background-color:#000000;\n"
+"    border-radius:5px;\n"
+"    background-color:\"black\";\n"
 "}\n"
 "\n"
 "#qt_calendar_calendarview::item:selected {\n"
@@ -350,32 +378,33 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.calendarWidget)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.selectedDate_lbl = QtWidgets.QLabel(self.layoutWidget)
+        self.selectedDate_lbl = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
         font.setFamily("Agency FB")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
         self.selectedDate_lbl.setFont(font)
         self.selectedDate_lbl.setObjectName("selectedDate_lbl")
         self.verticalLayout_5.addWidget(self.selectedDate_lbl)
-        self.selectedDate_lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
+        self.selectedDate_lineEdit = QtWidgets.QLineEdit(self.widget)
         self.selectedDate_lineEdit.setStyleSheet("")
         self.selectedDate_lineEdit.setObjectName("selectedDate_lineEdit")
         self.verticalLayout_5.addWidget(self.selectedDate_lineEdit)
-        self.information_lbl = QtWidgets.QLabel(self.layoutWidget)
+        self.information_lbl = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
         font.setFamily("Agency FB")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setWeight(50)
         self.information_lbl.setFont(font)
         self.information_lbl.setObjectName("information_lbl")
         self.verticalLayout_5.addWidget(self.information_lbl)
-        self.infomation_textEdit = QtWidgets.QTextEdit(self.layoutWidget)
+        self.infomation_textEdit = QtWidgets.QTextEdit(self.widget)
         self.infomation_textEdit.setObjectName("infomation_textEdit")
         self.verticalLayout_5.addWidget(self.infomation_textEdit)
         self.horizontalLayout_2.addLayout(self.verticalLayout_5)
+        self.search_layout.addLayout(self.horizontalLayout_2)
         self.verticalLayout_4.addWidget(self.frame)
         self.home_scrollArea.setWidget(self.area_home)
         self.gridLayout.addWidget(self.home_scrollArea, 0, 0, 1, 1)
@@ -390,7 +419,7 @@ class Ui_MainWindow(object):
         self.more_scrollArea.setWidgetResizable(True)
         self.more_scrollArea.setObjectName("more_scrollArea")
         self.area_more = QtWidgets.QWidget()
-        self.area_more.setGeometry(QtCore.QRect(0, 0, 796, 624))
+        self.area_more.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.area_more.setObjectName("area_more")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.area_more)
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
@@ -415,7 +444,7 @@ class Ui_MainWindow(object):
         self.map_scrollArea.setWidgetResizable(True)
         self.map_scrollArea.setObjectName("map_scrollArea")
         self.area_map = QtWidgets.QWidget()
-        self.area_map.setGeometry(QtCore.QRect(0, 0, 796, 624))
+        self.area_map.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.area_map.setObjectName("area_map")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.area_map)
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
@@ -448,6 +477,8 @@ class Ui_MainWindow(object):
         self.btn_more.setText(_translate("MainWindow", " More"))
         self.btn_exit.setText(_translate("MainWindow", " Exit"))
         self.name.setText(_translate("MainWindow", "Live Monitering System"))
+        self.today_date.setText(_translate("MainWindow", "yyyy-MM-dd hh:mm"))
+        self.label_2.setText(_translate("MainWindow", "Search Infomation"))
         self.selectedDate_lbl.setText(_translate("MainWindow", "Selected Date"))
         self.selectedDate_lineEdit.setText(_translate("MainWindow", "yyyy-MM-dd"))
         self.information_lbl.setText(_translate("MainWindow", "Infomation"))
