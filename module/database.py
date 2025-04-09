@@ -1,13 +1,15 @@
 import pymysql
 import json
-import time
+import os
 
 class DB():
     def __init__(self):
         self.DB = self.connect()
     
     def connect(self):
-        with open('config/DB.json', 'r', encoding='utf-8') as file:
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_path = os.path.join(base_path, 'config', 'DB.json')
+        with open(config_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
         conn = pymysql.connect(
             host=data["host"],

@@ -75,7 +75,7 @@ class MainClass(QMainWindow):
         self.changePage(key)
 
     def mousePressEvent(self, event):
-        if event.button()==Qt.LeftButton:
+        if event.button() == Qt.LeftButton:
             self.m_flag=True
             self.m_Position=event.globalPos()-self.pos()
             event.accept()
