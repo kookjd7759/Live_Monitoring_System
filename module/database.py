@@ -35,5 +35,4 @@ class DB():
 
 if __name__ == "__main__":
     database = DB()
-    data = database.search_date_one('2021-10-20')
-    print(data)
+    print(database)
