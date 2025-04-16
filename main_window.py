@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QDate, QTime, QTimer
 from PyQt5.QtGui import QCursor
 
 from ui.UI_main import Ui_MainWindow
+from datetime import datetime
 from module.database import DB
 
 class MainClass(QMainWindow):
@@ -13,10 +14,32 @@ class MainClass(QMainWindow):
         line = QDate.toString(date, 'yyyy-MM-dd') + '   ' + time.toString(Qt.DefaultLocaleShortDate)
         self.ui.today_date.setText(line)
 
-    def update_info(self):
+    def calendar_clicked(self):
         date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
-        self.database.search_date_one(date)
-        self.ui.infomation_textEdit.setText('didn\'t work.')
+
+        ### update selected date lineEdit
+        self.ui.selectedDate_lineEdit.setText(date)
+
+        ### update information 
+        data = self.database.search_date(date)
+        if data['worked']:
+            start_dt = data['start_time']
+            end_dt = data['end_time']
+            diff = end_dt - start_dt
+            total_seconds = diff.total_seconds()
+            hours = total_seconds // 3600
+            minutes = (total_seconds % 3600) // 60
+            seconds = total_seconds % 60
+
+            text = (
+                f'<span style="color:green;">[ Worked on it ]<span style="color:black;"><br><br>'
+                f"Start work : {data['start_time']}<br>"
+                f"End work : {data['end_time']}<br>"
+                f"Working duration: {int(hours):02}h {int(minutes):02}m {int(seconds):02}s<br>"
+                f"Data counts : {data['count']:,}"
+            )
+            self.ui.infomation_textEdit.setText(text)
+        else: self.ui.infomation_textEdit.setText('<span style="color:red;">[ Didn\'t work on it ]')
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -40,7 +63,7 @@ class MainClass(QMainWindow):
         self.ui.selectedDate_lineEdit.setReadOnly(True)
         self.ui.infomation_textEdit.setReadOnly(True)
         self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
-        self.ui.calendarWidget.clicked.connect(lambda: self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')))
+        self.ui.calendarWidget.clicked.connect(self.calendar_clicked)
         self.update_date_time()
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_date_time)

@@ -3,10 +3,7 @@ import json
 import os
 
 class DB():
-    def __init__(self):
-        self.DB = self.connect()
-    
-    def connect(self):
+    def __connect(self):
         base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         config_path = os.path.join(base_path, 'config', 'DB.json')
         with open(config_path, 'r', encoding='utf-8') as file:
@@ -21,20 +18,66 @@ class DB():
         )
         return conn
 
-    def excute_query(self, query):
+    def __init__(self):
+        self.DB = self.__connect()
+    
+    def execute_query(self, query):
         with self.DB.cursor() as cursor:
             cursor.execute(query)
             result = cursor.fetchone()
-        print('query end')
         return result
 
     def search_recent_one(self):
-        return self.excute_query("SELECT * FROM raw_yjsensing ORDER BY idx DESC LIMIT 1")
+        return self.execute_query("SELECT * FROM raw_yjsensing ORDER BY idx DESC LIMIT 1")
 
-    def search_date_one(self, date):
-        return self.excute_query(f"SELECT * FROM raw_yjsensing WHERE DATE(collecttime) = '{date}' LIMIT 1")
+    def search_date(self, date):
+        result = {
+            'worked': None,
+            'start_time': None,
+            'end_time': None,
+            'count': None
+        }
+
+        query_one = f"""
+            SELECT * FROM raw_yjsensing
+            WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+            LIMIT 1
+        """
+        isWorked = self.execute_query(query_one) != None
+        result['worked'] = isWorked
+        if isWorked:
+            query_firstTime = f"""
+                SELECT TIME(collecttime) FROM raw_yjsensing
+                WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+                ORDER BY collecttime ASC
+                LIMIT 1
+            """
+            first_time = self.execute_query(query_firstTime)
+
+            query_endTime = f"""
+                SELECT TIME(collecttime) FROM raw_yjsensing
+                WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+                ORDER BY collecttime DESC
+                LIMIT 1
+            """
+            end_time = self.execute_query(query_endTime)
+
+            query_count = f"""
+                SELECT COUNT(*) as count FROM raw_yjsensing
+                WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+            """
+            count_data = self.execute_query(query_count)
+
+            result['start_time'] = first_time["TIME(collecttime)"]
+            result['end_time'] = end_time["TIME(collecttime)"]
+            result['count'] = count_data['count']
+        
+        return result
 
 
 if __name__ == "__main__":
+    print('start !')
     database = DB()
-    print(database)
+    data = database.search_date('2025-04-14')
+    for key in data:
+        print(f'{key}, {data[key]}')

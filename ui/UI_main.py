@@ -32,10 +32,6 @@ class Ui_MainWindow(object):
 "    border-top-right-radius: 10px;\n"
 "    border-bottom-left-radius: 10px;\n"
 "    border-bottom-right-radius: 10px;\n"
-"}\n"
-"#menu_widget QPushButton:hover {\n"
-"    background-color: rgb(125,125,125);\n"
-"    border: 0px solid  #ffffff;\n"
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -122,6 +118,9 @@ class Ui_MainWindow(object):
 "    border-style: solid;\n"
 "    background-color: #941212;\n"
 "    color: #fff\n"
+"}\n"
+"#hover{\n"
+"    color: #fff\n"
 "}")
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/x_sq/x-square.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -189,13 +188,13 @@ class Ui_MainWindow(object):
 "    backgroun: #000000\n"
 "}")
         self.today_date.setObjectName("today_date")
-        self.widget = QtWidgets.QWidget(self.frame)
-        self.widget.setGeometry(QtCore.QRect(10, 120, 581, 241))
-        self.widget.setObjectName("widget")
-        self.search_layout = QtWidgets.QVBoxLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(self.frame)
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 60, 581, 241))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.search_layout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.search_layout.setContentsMargins(0, 0, 0, 0)
         self.search_layout.setObjectName("search_layout")
-        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("Agency FB")
         font.setPointSize(20)
@@ -206,7 +205,7 @@ class Ui_MainWindow(object):
         self.search_layout.addWidget(self.label_2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.calendarWidget = QtWidgets.QCalendarWidget(self.widget)
+        self.calendarWidget = QtWidgets.QCalendarWidget(self.layoutWidget)
         self.calendarWidget.setStyleSheet("/* Style for header area  ####################################################*/ \n"
 "\n"
 "QCalendarWidget QWidget {\n"
@@ -378,7 +377,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.calendarWidget)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.selectedDate_lbl = QtWidgets.QLabel(self.widget)
+        self.selectedDate_lbl = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("Agency FB")
         font.setPointSize(14)
@@ -387,11 +386,11 @@ class Ui_MainWindow(object):
         self.selectedDate_lbl.setFont(font)
         self.selectedDate_lbl.setObjectName("selectedDate_lbl")
         self.verticalLayout_5.addWidget(self.selectedDate_lbl)
-        self.selectedDate_lineEdit = QtWidgets.QLineEdit(self.widget)
+        self.selectedDate_lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
         self.selectedDate_lineEdit.setStyleSheet("")
         self.selectedDate_lineEdit.setObjectName("selectedDate_lineEdit")
         self.verticalLayout_5.addWidget(self.selectedDate_lineEdit)
-        self.information_lbl = QtWidgets.QLabel(self.widget)
+        self.information_lbl = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("Agency FB")
         font.setPointSize(14)
@@ -400,7 +399,7 @@ class Ui_MainWindow(object):
         self.information_lbl.setFont(font)
         self.information_lbl.setObjectName("information_lbl")
         self.verticalLayout_5.addWidget(self.information_lbl)
-        self.infomation_textEdit = QtWidgets.QTextEdit(self.widget)
+        self.infomation_textEdit = QtWidgets.QTextEdit(self.layoutWidget)
         self.infomation_textEdit.setObjectName("infomation_textEdit")
         self.verticalLayout_5.addWidget(self.infomation_textEdit)
         self.horizontalLayout_2.addLayout(self.verticalLayout_5)
@@ -483,13 +482,3 @@ class Ui_MainWindow(object):
         self.selectedDate_lineEdit.setText(_translate("MainWindow", "yyyy-MM-dd"))
         self.information_lbl.setText(_translate("MainWindow", "Infomation"))
 import resource_rc
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
