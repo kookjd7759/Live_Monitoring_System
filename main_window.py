@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout
-from PyQt5.QtCore import Qt, QDate, QTime, QTimer, QUrl
+from PyQt5.QtCore import Qt, QDate, QTime, QTimer, QUrl, QThread
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -9,6 +9,16 @@ import os
 
 from ui.UI_main import Ui_MainWindow
 from module.database import DB
+
+class MyThread(QThread):
+    def __init__(self, func, *args, **kwargs):
+        super().__init__()
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        self.func(*self.args, **self.kwargs)
 
 class MainClass(QMainWindow):
     def update_date_time(self):
@@ -53,7 +63,7 @@ class MainClass(QMainWindow):
         self.load_map()
     
     def init_state(self):
-        self.changePage('home')
+        self.change_page('home')
         self.ui.selectedDate_lineEdit.setReadOnly(True)
         self.ui.infomation_textEdit.setReadOnly(True)
         self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
@@ -65,13 +75,11 @@ class MainClass(QMainWindow):
         self.timer.start(1000)
         
     def init_btn(self):
-        self.ui.btn_home.clicked.connect(lambda: self.btn_menu_clicked('home'))
-        self.ui.btn_map.clicked.connect(lambda: self.btn_menu_clicked('map'))
-        self.ui.btn_more.clicked.connect(lambda: self.btn_menu_clicked('more'))
+        self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
+        self.ui.btn_map.clicked.connect(lambda: self.change_page('map'))
+        self.ui.btn_more.clicked.connect(lambda: self.change_page('more'))
 
-
-
-    def changePage(self, key):
+    def change_page(self, key):
         btn = None
         page = None
         if key == 'home':
@@ -89,13 +97,7 @@ class MainClass(QMainWindow):
         btn.setStyleSheet('*{ background-color: #1f232a; color: #fff }')
         self.current_menu_btn = btn
    
-    def calendar_clicked(self):
-        date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
-
-        ### update selected date lineEdit
-        self.ui.selectedDate_lineEdit.setText(date)
-
-        ### update information 
+    def calendar_update_infomation(self, date):
         data = self.database.search_date(date)
         if data['worked']:
             start_dt = data['start_time']
@@ -109,12 +111,12 @@ class MainClass(QMainWindow):
             working_time = total_seconds
             for i in range(0, len(data['time_list(sec)']) - 1):
                 diff = data['time_list(sec)'][i + 1] - data['time_list(sec)'][i]
-                if diff >= 120:
+                if diff >= 180:
                     working_time -= diff
             working_h = working_time // 3600
             working_m = (working_time % 3600) // 60
             working_sec = working_time % 60
-            
+
             text = (
                 f'<span style="color:green;">[ Worked on it ]<span style="color:black;"><br><br>'
                 f"Start work : {data['start_time']}<br>"
@@ -123,12 +125,18 @@ class MainClass(QMainWindow):
                 f"Working time: {int(working_h):02}h {int(working_m):02}m {int(working_sec):02}s<br>"
                 f"Data counts : {len(data['time_list(sec)']):,}"
             )
-            self.ui.infomation_textEdit.setText(text)
-        else: self.ui.infomation_textEdit.setText('<span style="color:red;">[ Didn\'t work on it ]')
-     
-    def btn_menu_clicked(self, key):
-        self.changePage(key)
+            self.ui.infomation_textEdit.setHtml(text)
+        else: self.ui.infomation_textEdit.setHtml('<span style="color:red;">[ Didn\'t work on it ]')
+    def calendar_clicked(self):
+        date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
 
+        ### update selected date lineEdit
+        self.ui.selectedDate_lineEdit.setText(date)
+
+        ### update information 
+        self.ui.infomation_textEdit.setHtml('<span style="color:gray;">Loading...</span>')
+        QTimer.singleShot(100, lambda: self.calendar_update_infomation(date))
+     
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.m_flag=True
