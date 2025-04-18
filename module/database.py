@@ -87,6 +87,6 @@ class DB():
 if __name__ == "__main__":
     print('start !')
     database = DB()
-    data = database.search_date('2025-04-14')
+    data = database.search_recent_one()
     for key in data:
         print(f'{key}, {data[key]}')

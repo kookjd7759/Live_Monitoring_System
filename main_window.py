@@ -27,10 +27,15 @@ class MainClass(QMainWindow):
         line = QDate.toString(date, 'yyyy-MM-dd') + '   ' + time.toString(Qt.DefaultLocaleShortDate)
         self.ui.today_date.setText(line)
 
+    def update_realtime_info(self):
+        recent_data = self.database.search_recent_one()
+        for key in recent_data:
+            print(f'{key}, {recent_data[key]}')
+
     def load_map(self):
-        m = folium.Map(location=[37.5665, 126.9780], zoom_start=13)
+        m = folium.Map(location=[37.8690, 127.7382], zoom_start=13)
         folium.Marker(
-            [37.5665, 126.9780], popup='Seoul City Hall', tooltip='Click me!'
+            [37.8690, 127.7382], popup='(주)솔리메틱스\nhttp://solimatics.co.kr', tooltip='Solimatics'
         ).add_to(m)
 
         map_file = 'folium_map.html'
@@ -65,14 +70,19 @@ class MainClass(QMainWindow):
     def init_state(self):
         self.change_page('home')
         self.ui.selectedDate_lineEdit.setReadOnly(True)
-        self.ui.infomation_textEdit.setReadOnly(True)
+        self.ui.realTimeInfo_textEdit.setReadOnly(True)
+        self.ui.infomation_textEdit.setReadOnly(True) 
         self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
         self.ui.calendarWidget.clicked.connect(self.calendar_clicked)
         self.calendar_clicked()
-        self.update_date_time()
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_date_time)
-        self.timer.start(1000)
+
+        self.timer_time = QTimer()
+        self.timer_time.timeout.connect(self.update_date_time)
+        self.timer_time.start(1000)
+
+        self.timer_realtime_info = QTimer()
+        self.timer_realtime_info.timeout.connect(self.update_realtime_info)
+        self.timer_realtime_info.start(3000)
         
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
@@ -98,6 +108,9 @@ class MainClass(QMainWindow):
         self.current_menu_btn = btn
    
     def calendar_update_infomation(self, date):
+        if date == QDate.currentDate().toString('yyyy-MM-dd'):
+            self.ui.infomation_textEdit.setHtml('<span style="color:black;">[ Today ] ')
+            return
         data = self.database.search_date(date)
         if data['worked']:
             start_dt = data['start_time']
@@ -119,10 +132,10 @@ class MainClass(QMainWindow):
 
             text = (
                 f'<span style="color:green;">[ Worked on it ]<span style="color:black;"><br><br>'
-                f"Start work : {data['start_time']}<br>"
-                f"End work : {data['end_time']}<br>"
-                f"Working duration: {int(duration_h):02}h {int(duration_m):02}m {int(duration_sec):02}s<br>"
-                f"Working time: {int(working_h):02}h {int(working_m):02}m {int(working_sec):02}s<br>"
+                f"Start work : {data['start_time']}<br><br>"
+                f"End work : {data['end_time']}<br><br>"
+                f"Working duration: {int(duration_h):02}h {int(duration_m):02}m {int(duration_sec):02}s<br><br>"
+                f"Working time: {int(working_h):02}h {int(working_m):02}m {int(working_sec):02}s<br><br>"
                 f"Data counts : {len(data['time_list(sec)']):,}"
             )
             self.ui.infomation_textEdit.setHtml(text)
@@ -135,7 +148,7 @@ class MainClass(QMainWindow):
 
         ### update information 
         self.ui.infomation_textEdit.setHtml('<span style="color:gray;">Loading...</span>')
-        QTimer.singleShot(100, lambda: self.calendar_update_infomation(date))
+        QTimer.singleShot(10, lambda: self.calendar_update_infomation(date))
      
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
