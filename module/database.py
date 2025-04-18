@@ -35,7 +35,7 @@ class DB():
             'worked': None,
             'start_time': None,
             'end_time': None,
-            'count': None
+            'time_list(sec)': None
         }
 
         query_one = f"""
@@ -45,6 +45,7 @@ class DB():
         """
         isWorked = self.execute_query(query_one) != None
         result['worked'] = isWorked
+
         if isWorked:
             query_firstTime = f"""
                 SELECT TIME(collecttime) FROM raw_yjsensing
@@ -62,15 +63,23 @@ class DB():
             """
             end_time = self.execute_query(query_endTime)
 
-            query_count = f"""
-                SELECT COUNT(*) as count FROM raw_yjsensing
-                WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+            query_times = f"""
+            SELECT TIME(collecttime) as time_value FROM raw_yjsensing
+            WHERE collecttime >= '{date}' AND collecttime < DATE_ADD('{date}', INTERVAL 1 DAY)
+            ORDER BY collecttime ASC
             """
-            count_data = self.execute_query(query_count)
+            time_list = []
+            with self.DB.cursor() as cursor:
+                cursor.execute(query_times)
+                times = cursor.fetchall()
+                for row in times:
+                    delta = row['time_value']
+                    total_seconds = int(delta.total_seconds())
+                    time_list.append(total_seconds)
 
             result['start_time'] = first_time["TIME(collecttime)"]
             result['end_time'] = end_time["TIME(collecttime)"]
-            result['count'] = count_data['count']
+            result['time_list(sec)'] = time_list
         
         return result
 

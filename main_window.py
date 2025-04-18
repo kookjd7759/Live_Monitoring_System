@@ -1,10 +1,13 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtCore import Qt, QDate, QTime, QTimer
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout
+from PyQt5.QtCore import Qt, QDate, QTime, QTimer, QUrl
 from PyQt5.QtGui import QCursor
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+
+import folium
+import sys
+import os
 
 from ui.UI_main import Ui_MainWindow
-from datetime import datetime
 from module.database import DB
 
 class MainClass(QMainWindow):
@@ -14,32 +17,17 @@ class MainClass(QMainWindow):
         line = QDate.toString(date, 'yyyy-MM-dd') + '   ' + time.toString(Qt.DefaultLocaleShortDate)
         self.ui.today_date.setText(line)
 
-    def calendar_clicked(self):
-        date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
+    def load_map(self):
+        m = folium.Map(location=[37.5665, 126.9780], zoom_start=13)
+        folium.Marker(
+            [37.5665, 126.9780], popup='Seoul City Hall', tooltip='Click me!'
+        ).add_to(m)
 
-        ### update selected date lineEdit
-        self.ui.selectedDate_lineEdit.setText(date)
+        map_file = 'folium_map.html'
+        m.save(map_file)
 
-        ### update information 
-        data = self.database.search_date(date)
-        if data['worked']:
-            start_dt = data['start_time']
-            end_dt = data['end_time']
-            diff = end_dt - start_dt
-            total_seconds = diff.total_seconds()
-            hours = total_seconds // 3600
-            minutes = (total_seconds % 3600) // 60
-            seconds = total_seconds % 60
-
-            text = (
-                f'<span style="color:green;">[ Worked on it ]<span style="color:black;"><br><br>'
-                f"Start work : {data['start_time']}<br>"
-                f"End work : {data['end_time']}<br>"
-                f"Working duration: {int(hours):02}h {int(minutes):02}m {int(seconds):02}s<br>"
-                f"Data counts : {data['count']:,}"
-            )
-            self.ui.infomation_textEdit.setText(text)
-        else: self.ui.infomation_textEdit.setText('<span style="color:red;">[ Didn\'t work on it ]')
+        file_path = os.path.abspath(map_file)
+        self.map_view.load(QUrl.fromLocalFile(file_path))
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -57,6 +45,12 @@ class MainClass(QMainWindow):
     def init_value(self):
         self.current_menu_btn = self.ui.btn_home
         self.database = DB()
+
+        self.map_view = QWebEngineView()
+        layout = QVBoxLayout(self.ui.frame_map)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.map_view)
+        self.load_map()
     
     def init_state(self):
         self.changePage('home')
@@ -64,6 +58,7 @@ class MainClass(QMainWindow):
         self.ui.infomation_textEdit.setReadOnly(True)
         self.ui.selectedDate_lineEdit.setText(QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd'))
         self.ui.calendarWidget.clicked.connect(self.calendar_clicked)
+        self.calendar_clicked()
         self.update_date_time()
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_date_time)
@@ -93,7 +88,44 @@ class MainClass(QMainWindow):
         self.current_menu_btn.setStyleSheet('*{ background-color: #313a46; color: #fff }')
         btn.setStyleSheet('*{ background-color: #1f232a; color: #fff }')
         self.current_menu_btn = btn
-        
+   
+    def calendar_clicked(self):
+        date = QDate.toString(self.ui.calendarWidget.selectedDate(), 'yyyy-MM-dd')
+
+        ### update selected date lineEdit
+        self.ui.selectedDate_lineEdit.setText(date)
+
+        ### update information 
+        data = self.database.search_date(date)
+        if data['worked']:
+            start_dt = data['start_time']
+            end_dt = data['end_time']
+            diff = end_dt - start_dt
+            total_seconds = diff.total_seconds()
+            duration_h = total_seconds // 3600
+            duration_m = (total_seconds % 3600) // 60
+            duration_sec = total_seconds % 60
+
+            working_time = total_seconds
+            for i in range(0, len(data['time_list(sec)']) - 1):
+                diff = data['time_list(sec)'][i + 1] - data['time_list(sec)'][i]
+                if diff >= 120:
+                    working_time -= diff
+            working_h = working_time // 3600
+            working_m = (working_time % 3600) // 60
+            working_sec = working_time % 60
+            
+            text = (
+                f'<span style="color:green;">[ Worked on it ]<span style="color:black;"><br><br>'
+                f"Start work : {data['start_time']}<br>"
+                f"End work : {data['end_time']}<br>"
+                f"Working duration: {int(duration_h):02}h {int(duration_m):02}m {int(duration_sec):02}s<br>"
+                f"Working time: {int(working_h):02}h {int(working_m):02}m {int(working_sec):02}s<br>"
+                f"Data counts : {len(data['time_list(sec)']):,}"
+            )
+            self.ui.infomation_textEdit.setText(text)
+        else: self.ui.infomation_textEdit.setText('<span style="color:red;">[ Didn\'t work on it ]')
+     
     def btn_menu_clicked(self, key):
         self.changePage(key)
 
@@ -103,12 +135,10 @@ class MainClass(QMainWindow):
             self.m_Position=event.globalPos()-self.pos()
             event.accept()
             self.setCursor(QCursor(Qt.OpenHandCursor))
-
     def mouseMoveEvent(self, QMouseEvent):
         if Qt.LeftButton and self.m_flag:  
             self.move(QMouseEvent.globalPos()-self.m_Position)
             QMouseEvent.accept()
-
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_flag=False
         self.setCursor(QCursor(Qt.ArrowCursor))
