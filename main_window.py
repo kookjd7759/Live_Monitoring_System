@@ -27,10 +27,15 @@ class MainClass(QMainWindow):
         line = QDate.toString(date, 'yyyy-MM-dd') + '   ' + time.toString(Qt.DefaultLocaleShortDate)
         self.ui.today_date.setText(line)
 
-    def update_realtime_info(self):
+    def update_today_info(self):
         recent_data = self.database.search_recent_one()
+        text = ''
         for key in recent_data:
-            print(f'{key}, {recent_data[key]}')
+            text += f'{key}, {recent_data[key]}\n'
+        print(text)
+        self.ui.realTimeInfo_textEdit.setText(text)
+
+
 
     def load_map(self):
         m = folium.Map(location=[37.8690, 127.7382], zoom_start=13)
@@ -81,8 +86,9 @@ class MainClass(QMainWindow):
         self.timer_time.start(1000)
 
         self.timer_realtime_info = QTimer()
-        self.timer_realtime_info.timeout.connect(self.update_realtime_info)
+        self.timer_realtime_info.timeout.connect(self.update_today_info)
         self.timer_realtime_info.start(3000)
+        self.update_today_info()
         
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
