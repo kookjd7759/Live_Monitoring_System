@@ -29,8 +29,11 @@ class MainClass(QMainWindow):
 
     def update_realtime_info(self):
         recent_data = self.database.search_recent_one()
+        text = ''
         for key in recent_data:
-            print(f'{key}, {recent_data[key]}')
+            text += f'{key}, {recent_data[key]}\n'
+        print(text)
+        self.ui.realTimeInfo_textEdit.setText(text)
 
     def load_map(self):
         m = folium.Map(location=[37.8690, 127.7382], zoom_start=13)
