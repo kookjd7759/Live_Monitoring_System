@@ -89,7 +89,7 @@ class MainClass(QMainWindow):
         self.timer_realtime_info = QTimer()
         self.timer_realtime_info.timeout.connect(self.update_today_info)
         self.timer_realtime_info.start(3000)
-        self.update_realtime_info()
+        self.update_today_info()
     
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
