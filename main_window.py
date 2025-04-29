@@ -30,7 +30,6 @@ class MainClass(QMainWindow):
 
     def update_today_info(self):
         recent_data = self.database.search_recent_one()
-<<<<<<< HEAD
         is_today = recent_data['collecttime'].date() == datetime.today().date()
         text = "It's working on it\n\n" if is_today else "It's not working on it\n\n"
         if is_today:
@@ -38,15 +37,6 @@ class MainClass(QMainWindow):
                 text += f'{key}, {recent_data[key]}\n'
             print(text)
         self.ui.realTimeInfo_textEdit.setText(text)
-=======
-        text = ''
-        for key in recent_data:
-            text += f'{key}, {recent_data[key]}\n'
-        print(text)
-        self.ui.realTimeInfo_textEdit.setText(text)
-
-
->>>>>>> d42bbf460e4155409e464c3bc3fdf816949cf4ce
 
     def load_map(self):
         m = folium.Map(location=[37.8690, 127.7382], zoom_start=13)
@@ -99,13 +89,8 @@ class MainClass(QMainWindow):
         self.timer_realtime_info = QTimer()
         self.timer_realtime_info.timeout.connect(self.update_today_info)
         self.timer_realtime_info.start(3000)
-<<<<<<< HEAD
         self.update_realtime_info()
     
-=======
-        self.update_today_info()
-        
->>>>>>> d42bbf460e4155409e464c3bc3fdf816949cf4ce
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
         self.ui.btn_map.clicked.connect(lambda: self.change_page('map'))
