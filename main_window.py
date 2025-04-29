@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout
 from PyQt5.QtCore import Qt, QDate, QTime, QTimer, QUrl, QThread
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWebEngineWidgets import QWebEngineView
+from datetime import datetime
 
 import folium
 import sys
@@ -29,10 +30,12 @@ class MainClass(QMainWindow):
 
     def update_realtime_info(self):
         recent_data = self.database.search_recent_one()
-        text = ''
-        for key in recent_data:
-            text += f'{key}, {recent_data[key]}\n'
-        print(text)
+        is_today = recent_data['collecttime'].date() == datetime.today().date()
+        text = "It's working on it\n\n" if is_today else "It's not working on it\n\n"
+        if is_today:
+            for key in recent_data:
+                text += f'{key}, {recent_data[key]}\n'
+            print(text)
         self.ui.realTimeInfo_textEdit.setText(text)
 
     def load_map(self):
@@ -86,7 +89,8 @@ class MainClass(QMainWindow):
         self.timer_realtime_info = QTimer()
         self.timer_realtime_info.timeout.connect(self.update_realtime_info)
         self.timer_realtime_info.start(3000)
-        
+        self.update_realtime_info()
+    
     def init_btn(self):
         self.ui.btn_home.clicked.connect(lambda: self.change_page('home'))
         self.ui.btn_map.clicked.connect(lambda: self.change_page('map'))
@@ -109,11 +113,12 @@ class MainClass(QMainWindow):
         self.current_menu_btn.setStyleSheet('*{ background-color: #313a46; color: #fff }')
         btn.setStyleSheet('*{ background-color: #1f232a; color: #fff }')
         self.current_menu_btn = btn
-   
+    
     def calendar_update_infomation(self, date):
         if date == QDate.currentDate().toString('yyyy-MM-dd'):
             self.ui.infomation_textEdit.setHtml('<span style="color:black;">[ Today ] ')
             return
+        
         data = self.database.search_date(date)
         if data['worked']:
             start_dt = data['start_time']
@@ -152,7 +157,7 @@ class MainClass(QMainWindow):
         ### update information 
         self.ui.infomation_textEdit.setHtml('<span style="color:gray;">Loading...</span>')
         QTimer.singleShot(10, lambda: self.calendar_update_infomation(date))
-     
+    
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.m_flag=True
