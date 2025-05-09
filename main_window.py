@@ -72,7 +72,7 @@ class MainClass(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.map_view)
         self.load_map()
-    
+        
     def init_state(self):
         self.change_page('home')
         self.ui.selectedDate_lineEdit.setReadOnly(True)
